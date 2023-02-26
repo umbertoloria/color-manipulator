@@ -1,4 +1,4 @@
-const Jimp = require('jimp');
+import Jimp from 'jimp';
 
 (async () => {
     // const image = await Jimp.read('https://images.pexels.com/photos/4629485/pexels-photo-4629485.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260');
