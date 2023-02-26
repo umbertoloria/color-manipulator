@@ -1,8 +1,12 @@
 const Jimp = require('jimp');
 
-const image = await Jimp.read('https://images.pexels.com/photos/4629485/pexels-photo-4629485.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260');
-await image.resize(150, 150);
-await image.writeAsync(`resized-image.png`);
+(async () => {
+    // const image = await Jimp.read('https://images.pexels.com/photos/4629485/pexels-photo-4629485.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260');
+    const image = await Jimp.read('./source.jpg');
+    // await image.resize(150, 150);
+    // await image.color
+    await image.writeAsync(`out/out.png`);
+})();
 
 /*
 async function resize() {
