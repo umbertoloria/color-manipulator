@@ -39,16 +39,12 @@ const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
             const height = image.getHeight();
             for (let x = 0; x < width; ++x) {
                 for (let y = 0; y < height; ++y) {
-                    const colorHex = image.getPixelColor(x, y);
-                    const rgba = jimp.intToRGBA(colorHex);
-                    let color: RGB = {
+                    const rgba = jimp.intToRGBA(image.getPixelColor(x, y));
+                    const color = fileFilter({
                         r: rgba.r / 255.0,
                         g: rgba.g / 255.0,
                         b: rgba.b / 255.0,
-                    };
-
-                    color = fileFilter(color);
-
+                    });
                     rgba.r = safeColor(color.r * 255.0);
                     rgba.g = safeColor(color.g * 255.0);
                     rgba.b = safeColor(color.b * 255.0);
