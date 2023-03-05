@@ -1,6 +1,21 @@
 import jimp from 'jimp';
 import * as fs from 'fs';
-import {add, addList, getG, getInterval, mult, onlyB, onlyG, onlyR, RGB, safeColor, scalar, sub} from './lib';
+import {
+    add,
+    addList,
+    filterScalar,
+    getG,
+    getInterval,
+    getR,
+    mult,
+    onlyB,
+    onlyG,
+    onlyR,
+    RGB,
+    safeColor,
+    scalar,
+    sub
+} from './lib';
 
 const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
 
@@ -24,6 +39,17 @@ const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
                     ),
                 ),
             ),
+        );
+    },
+
+    '2.jpg'(c) {
+        const CERCHI_TAMBURO = (filterScalar(getR(c), 0.6, 0.85) - 0.6);
+
+        return addList(
+            mult(c, scalar(.5)), // FIXME: 10% quersta 90% restop mio
+            onlyR(CERCHI_TAMBURO * 10),
+            onlyG(CERCHI_TAMBURO * 5),
+            onlyB(.35),
         );
     },
 
