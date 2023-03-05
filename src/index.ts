@@ -38,7 +38,7 @@ function manipulateColor(rgba: RGB) {
 }
 
 (async () => {
-    const image = await jimp.read('./source.jpg');
+    const image = await jimp.read('./input/1.jpg');
     const width = image.getWidth();
     const height = image.getHeight();
     for (let x = 0; x < width; ++x) {
