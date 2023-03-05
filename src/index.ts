@@ -2,19 +2,13 @@ import jimp from 'jimp';
 import * as fs from 'fs';
 import {add, addList, getG, getInterval, mult, onlyBlue, onlyGreen, onlyRed, RGB, safeColor, scalar, sub} from './lib';
 
-const filesFilters: { [key: string]: (rgba: RGB) => void | undefined } = {
+const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
 
-    '1.jpg': (rgba: RGB) => {
-        let color: RGB = {
-            r: rgba.r / 255.0,
-            g: rgba.g / 255.0,
-            b: rgba.b / 255.0,
-        };
-
+    '1.jpg'(color) {
         const CUSTOM_FILTER_1 = (c: RGB) => safeColor(((1 - c.b) - .5) * 10 + .5)
         const custom_channel_1 = CUSTOM_FILTER_1(color);
 
-        color = addList(
+        return addList(
             mult(
                 add(
                     onlyGreen(custom_channel_1 * .2),
@@ -31,10 +25,6 @@ const filesFilters: { [key: string]: (rgba: RGB) => void | undefined } = {
                 ),
             ),
         );
-
-        rgba.r = safeColor(color.r * 255.0);
-        rgba.g = safeColor(color.g * 255.0);
-        rgba.b = safeColor(color.b * 255.0);
     },
 
 };
@@ -42,7 +32,7 @@ const filesFilters: { [key: string]: (rgba: RGB) => void | undefined } = {
 (async () => {
     const files = fs.readdirSync('input');
     for (const file of files) {
-        const fileFilter = filesFilters["1.jpg"];
+        const fileFilter = filesFilters[file];
         if (!!fileFilter) {
             const image = await jimp.read(`./input/${file}`);
             const width = image.getWidth();
@@ -51,7 +41,17 @@ const filesFilters: { [key: string]: (rgba: RGB) => void | undefined } = {
                 for (let y = 0; y < height; ++y) {
                     const colorHex = image.getPixelColor(x, y);
                     const rgba = jimp.intToRGBA(colorHex);
-                    fileFilter(rgba);
+                    let color: RGB = {
+                        r: rgba.r / 255.0,
+                        g: rgba.g / 255.0,
+                        b: rgba.b / 255.0,
+                    };
+
+                    color = fileFilter(color);
+
+                    rgba.r = safeColor(color.r * 255.0);
+                    rgba.g = safeColor(color.g * 255.0);
+                    rgba.b = safeColor(color.b * 255.0);
                     image.setPixelColor(
                         jimp.rgbaToInt(rgba.r, rgba.g, rgba.b, rgba.a),
                         x,
