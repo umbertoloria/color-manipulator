@@ -1,6 +1,6 @@
 import jimp from 'jimp';
 import * as fs from 'fs';
-import {add, addList, getG, getInterval, mult, onlyBlue, onlyGreen, onlyRed, RGB, safeColor, scalar, sub} from './lib';
+import {add, addList, getG, getInterval, mult, onlyB, onlyG, onlyR, RGB, safeColor, scalar, sub} from './lib';
 
 const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
 
@@ -11,12 +11,12 @@ const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
         return addList(
             mult(
                 add(
-                    onlyGreen(custom_channel_1 * .2),
-                    onlyBlue(custom_channel_1),
+                    onlyG(custom_channel_1 * .2),
+                    onlyB(custom_channel_1),
                 ),
                 scalar(.85)
             ),
-            onlyRed(
+            onlyR(
                 getG(
                     sub(
                         getInterval(c, .5, .7),
@@ -35,6 +35,8 @@ const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
         const fileFilter = filesFilters[file];
         if (!!fileFilter) {
             const image = await jimp.read(`./input/${file}`);
+            // For resize large images.
+            // image.resize(1000, 1000 / (image.getWidth() / image.getHeight()));
             const width = image.getWidth();
             const height = image.getHeight();
             for (let x = 0; x < width; ++x) {

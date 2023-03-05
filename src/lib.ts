@@ -53,17 +53,17 @@ export const scalar = (scalar: number): RGB => ({
     g: scalar,
     b: scalar,
 });
-export const onlyRed = (r: number): RGB => ({
+export const onlyR = (r: number): RGB => ({
     r,
     g: 0,
     b: 0,
 });
-export const onlyGreen = (g: number): RGB => ({
+export const onlyG = (g: number): RGB => ({
     r: 0,
     g,
     b: 0,
 });
-export const onlyBlue = (b: number): RGB => ({
+export const onlyB = (b: number): RGB => ({
     r: 0,
     g: 0,
     b,
