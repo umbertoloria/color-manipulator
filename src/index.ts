@@ -1,5 +1,6 @@
 import jimp from 'jimp';
-import {add, addList, getG, getInterval, mult, onlyBlue, onlyGreen, onlyRed, RGB, safeColor, scalar, sub} from "./lib";
+import * as fs from 'fs';
+import {add, addList, getG, getInterval, mult, onlyBlue, onlyGreen, onlyRed, RGB, safeColor, scalar, sub} from './lib';
 
 function manipulateColor(rgba: RGB) {
     let color: RGB = {
@@ -19,16 +20,13 @@ function manipulateColor(rgba: RGB) {
             ),
             scalar(.85)
         ),
-        add(
-            onlyRed(
-                getG(
-                    sub(
-                        getInterval(color, .5, .7),
-                        scalar(.5),
-                    ),
+        onlyRed(
+            getG(
+                sub(
+                    getInterval(color, .5, .7),
+                    scalar(.5),
                 ),
             ),
-            onlyRed(0),
         ),
     );
 
@@ -37,8 +35,8 @@ function manipulateColor(rgba: RGB) {
     rgba.b = safeColor(color.b * 255.0);
 }
 
-(async () => {
-    const image = await jimp.read('./input/1.jpg');
+async function manipulateFile(file: string) {
+    const image = await jimp.read(`./input/${file}`);
     const width = image.getWidth();
     const height = image.getHeight();
     for (let x = 0; x < width; ++x) {
@@ -53,5 +51,12 @@ function manipulateColor(rgba: RGB) {
             );
         }
     }
-    await image.writeAsync(`out/out.png`);
+    await image.writeAsync(`out/${file}`);
+}
+
+(async () => {
+    const files = fs.readdirSync('input');
+    for (const file of files) {
+        await manipulateFile(file);
+    }
 })();
