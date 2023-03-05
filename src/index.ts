@@ -4,9 +4,9 @@ import {add, addList, getG, getInterval, mult, onlyBlue, onlyGreen, onlyRed, RGB
 
 const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
 
-    '1.jpg'(color) {
+    '1.jpg'(c) {
         const CUSTOM_FILTER_1 = (c: RGB) => safeColor(((1 - c.b) - .5) * 10 + .5)
-        const custom_channel_1 = CUSTOM_FILTER_1(color);
+        const custom_channel_1 = CUSTOM_FILTER_1(c);
 
         return addList(
             mult(
@@ -19,7 +19,7 @@ const filesFilters: { [key: string]: ((rgba: RGB) => RGB) | undefined } = {
             onlyRed(
                 getG(
                     sub(
-                        getInterval(color, .5, .7),
+                        getInterval(c, .5, .7),
                         scalar(.5),
                     ),
                 ),
