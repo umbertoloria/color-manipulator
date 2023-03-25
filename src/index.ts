@@ -6,6 +6,8 @@ import {
     color,
     filterColor,
     filterScalar,
+    filterScalarAndStretch,
+    getB,
     getG,
     getR,
     mult,
@@ -75,6 +77,42 @@ const filesConfs: {
                     ),
                 ),
                 onlyB(.35),
+            );
+        },
+    },
+
+    '20230301_225057.jpg': {
+        '20230303_162133.jpg'(c) {
+            return addList(
+                color(
+                    0,
+                    .2,
+                    .15,
+                ),
+                mult(
+                    scalar(filterScalarAndStretch(getB(c), .28, .39)),
+                    color(
+                        0,
+                        .6,
+                        0,
+                    ),
+                ),
+                mult(
+                    scalar(filterScalarAndStretch(getR(c), .1, .2)),
+                    color(
+                        .001,
+                        .025,
+                        .008,
+                    ),
+                ),
+                mult(
+                    scalar(filterScalarAndStretch(getG(c), .68, .7)),
+                    color(
+                        .6,
+                        .8,
+                        .01,
+                    ),
+                ),
             );
         },
     },
