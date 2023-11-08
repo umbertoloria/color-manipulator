@@ -31,6 +31,11 @@ export const filterColorAndStretch = (c: RGB, min: number, max: number) => addLi
     onlyB(filterScalarAndStretch(getB(c), min, max)),
 )
 
+export const scalarCosineStretch = (scalar: number) => Math.cos((1 + scalar) * Math.PI / 2) ** 2;
+// export const scalarQuadraticStretch = (scalar: number) => (scalar * 2 - 1) ** 2 * (scalar <= 0.5 ? -1 : +1);
+export const scalarQuadraticStretch = (scalar: number, height: number) => baseQuadraticFn(scalar * 2 - 1, height);
+const baseQuadraticFn = (x: number, height: number) => (x < 0 ? -1 : 1) * (((2 * x) ** (2 * height)) / 2);
+
 export const zero = (): RGB => ({
     r: 0,
     g: 0,
