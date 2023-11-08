@@ -4,6 +4,7 @@ import {
     add,
     addList,
     color,
+    colorHex,
     filterColor,
     filterScalar,
     filterScalarAndStretch,
@@ -112,6 +113,48 @@ const filesConfs: {
                         .8,
                         .01,
                     ),
+                ),
+            );
+        },
+    },
+
+    '20231002_103537.jpg': {
+        '20231002_103537.jpg'(c) {
+            return addList(
+                // Base
+                mult(colorHex('#cc1a4d'), scalar(.02)),
+
+                // Mattoni base
+                mult(
+                    scalar((
+                        filterScalarAndStretch(getR(c), .11, .81)
+                        - filterScalarAndStretch(getB(c), .11, .81)
+                    ) * .6),
+                    colorHex('#00222f'),
+                ),
+
+                // Mattoni luce
+                mult(
+                    scalar((
+                        filterScalarAndStretch(getR(c), .11, .81)
+                        - filterScalarAndStretch(getG(c), .11, .81)
+                    ) * .7),
+                    colorHex('#001749'),
+                ),
+
+                // Effetti su mattoni
+                mult(
+                    scalar((
+                        filterScalarAndStretch(getG(c), .5, .6)
+                        - filterScalarAndStretch(getB(c), .5, .6)
+                    ) * .7),
+                    colorHex('#cc1a4d'),
+                ),
+
+                // Mensole
+                mult(
+                    scalar(filterScalarAndStretch(getG(c), .85, .95) * .23),
+                    colorHex('#880c31'),
                 ),
             );
         },

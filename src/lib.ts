@@ -42,17 +42,30 @@ export const color = (r: number, g: number, b: number): RGB => ({
     g,
     b,
 });
+export const colorHex = (hex: string): RGB => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) {
+        throw new Error('Invalid HEX color');
+    }
+    const rHex = result[1];
+    const gHex = result[2];
+    const bHex = result[3];
+    return {
+        r: parseInt(rHex, 16) / 255,
+        g: parseInt(gHex, 16) / 255,
+        b: parseInt(bHex, 16) / 255,
+    };
+};
 export const add = (a: RGB, b: RGB): RGB => ({
     r: a.r + b.r,
     g: a.g + b.g,
     b: a.b + b.b,
 });
-export const negate = (c: RGB): RGB => ({
-    r: -c.r,
-    g: -c.g,
-    b: -c.b,
+export const sub = (a: RGB, b: RGB) => add(a, {
+    r: -b.r,
+    g: -b.g,
+    b: -b.b,
 });
-export const sub = (a: RGB, b: RGB) => add(a, negate(b));
 export const mult = (a: RGB, b: RGB): RGB => ({
     r: a.r * b.r,
     g: a.g * b.g,
@@ -81,14 +94,16 @@ export const onlyB = (b: number): RGB => ({
 export const getR = (c: RGB) => c.r;
 export const getG = (c: RGB) => c.g;
 export const getB = (c: RGB) => c.b;
-export const addList = (...cList: RGB[]): RGB => {
+export const addList = (...cList: (RGB | boolean)[]): RGB => {
     let r = 0;
     let g = 0;
     let b = 0;
     for (const c of cList) {
-        r += c.r;
-        g += c.g;
-        b += c.b;
+        if (typeof c === 'object') {
+            r += c.r;
+            g += c.g;
+            b += c.b;
+        }
     }
     return {
         r,
@@ -101,7 +116,7 @@ export const xorColor = (a: RGB, b: RGB) => color(
     Math.abs(a.r - b.r),
     Math.abs(a.g - b.g),
     Math.abs(a.b - b.b),
-)
+);
 
 export const mean = (c: RGB): number => (c.r + c.g + c.b) / 3.0;
 
