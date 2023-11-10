@@ -144,10 +144,95 @@ const listSourceFileConf: Record<string, undefined | SourceFileConf> = {
     },
 
     '20231002_103537.jpg': {
+        onStart(srcImage) {
+            const width = srcImage.getWidth();
+            const height = srcImage.getHeight();
+
+            // Backup image
+            const bkpColorRows = [];
+            let x, y;
+            for (y = 0; y < height; ++y) {
+                const bkpColorRow = [];
+                for (x = 0; x < width; ++x) {
+                    // @ts-ignore
+                    const srcColorHex: number = srcImage.getPixelColor(x, y);
+                    bkpColorRow.push(srcColorHex);
+                }
+                bkpColorRows.push(bkpColorRow);
+            }
+
+            // Image resize
+            srcImage.resize(width, width);
+            const toAddOnAbove = (width - height) / 2; // "width" is the new "height".
+            // const toAddOnBelow = width - height - toAddOnAbove;
+
+            // Known data:
+            //   width=4624
+            //   height=3468
+            //   toAddOnAbove=578
+            //   toAddOnBelow=578
+
+            const defaultColor = jimp.rgbaToInt(
+                0, 0, 0, // Black color for above and below sections
+                255,
+                () => {
+                },
+            );
+            // Above section
+            for (y = 0; y < toAddOnAbove; ++y) { // "width" is the new "height".
+                for (x = 0; x < width; ++x) {
+                    srcImage.setPixelColor(defaultColor, x, y);
+                }
+            }
+            // Image section
+            for (; y < toAddOnAbove + height; ++y) { // The old "height".
+                for (x = 0; x < width; ++x) {
+                    const oldY = y - toAddOnAbove;
+                    const oldColor = bkpColorRows[oldY][x]
+                    srcImage.setPixelColor(oldColor, x, y);
+                }
+            }
+            // Below section
+            for (; y < width; ++y) { // "width" is the new "height".
+                for (x = 0; x < width; ++x) {
+                    srcImage.setPixelColor(defaultColor, x, y);
+                }
+            }
+        },
         files: [
+            {
+                name: '20231002_103537_0.jpg',
+                calculateColor(c, p) {
+                    // Known data:
+                    //   width=4624
+                    //   height=3468
+                    //   toAddOnAbove=578
+                    //   toAddOnBelow=578
+                    const convertedY = p.y * 4624;
+                    if (
+                        convertedY < 578
+                        || convertedY >= (578 + 3468)
+                    ) {
+                        return colorHex('#ac7360');
+                    }
+                    return c;
+                },
+            },
             {
                 name: '20231002_103537_1.jpg',
                 calculateColor(c, p) {
+                    // Known data:
+                    //   width=4624
+                    //   height=3468
+                    //   toAddOnAbove=578
+                    //   toAddOnBelow=578
+                    const convertedY = p.y * 4624;
+                    if (
+                        convertedY < 578
+                        || convertedY >= (578 + 3468)
+                    ) {
+                        return colorHex('#4c6d26');
+                    }
                     const lead = colorHex('#d09f00');
                     const base = colorHex('#094837');
                     const baseLeft = colorHex('#480937');
@@ -187,16 +272,16 @@ const listSourceFileConf: Record<string, undefined | SourceFileConf> = {
                             * .9)),
 
                         // Saracinesca
-                        p.y > .75
+                        p.y > .68
                             ? mult(saracinesche, scalar(filterScalarAndStretch(getG(c), .85, .95) * 2))
                             : false,
 
                         // Finestre
-                        (p.y < .7 && p.x < .482)
+                        (p.y < .65 && p.x < .482)
                             ? mult(lead,
                                 scalar(filterScalarAndStretch(getG(c), .85, .95) * .12))
                             : false,
-                        (p.y < .7 && p.x > .486)
+                        (p.y < .65 && p.x > .486)
                             ? mult(baseLight,
                                 scalar(filterScalarAndStretch(getG(c), .85, .95) * .11))
                             : false,
@@ -205,7 +290,19 @@ const listSourceFileConf: Record<string, undefined | SourceFileConf> = {
             },
             {
                 name: '20231002_103537_2.jpg',
-                calculateColor(c) {
+                calculateColor(c, p) {
+                    // Known data:
+                    //   width=4624
+                    //   height=3468
+                    //   toAddOnAbove=578
+                    //   toAddOnBelow=578
+                    const convertedY = p.y * 4624;
+                    if (
+                        convertedY < 578
+                        || convertedY >= (578 + 3468)
+                    ) {
+                        return colorHex('#0e0d1f');
+                    }
                     return addList(
                         // Base
                         mult(colorHex('#cc1a4d'), scalar(.02)),
