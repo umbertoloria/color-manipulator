@@ -127,3 +127,33 @@ export const blend = (a: RGB, b: RGB, percentage: number) => add(
 
 // type Filter = (c: RGB) => RGB
 // export const wrap = (filter: Filter, c: RGB) => copy(filter(copy(c)));
+
+
+/// POSITION
+export type POS = {
+    x: number;
+    y: number;
+}
+
+export const getCenter = (): POS => ({x: .5, y: .5}) as const;
+export const getDistance = (a: POS, b: POS): number => Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+export const getMaxRadiusInCube = (): number => Math.sqrt(.5);
+export const gradientRadius = (a: POS, center: POS, maxDist: number): number => {
+    const dist = getDistance(a, center);
+    const distProp = dist / maxDist;
+    if (distProp > 1) {
+        return 0;
+    }
+    return 1 - distProp;
+};
+
+export const gradientLinear = (pos: number, from: number, to: number): number => {
+    const distProp = (pos - from) / (to - from);
+    if (distProp > 1) {
+        return 1;
+    }
+    if (distProp < 0) {
+        return 0;
+    }
+    return distProp;
+};
