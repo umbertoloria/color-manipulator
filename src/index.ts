@@ -11,20 +11,22 @@ import {
     getB,
     getG,
     getR,
+    gradientLinear,
     mult,
     onlyB,
     onlyG,
     onlyR,
+    POS,
     RGB,
     safeColor,
     scalar,
     sub,
-    xorColor
+    xorColor,
 } from './lib';
 
 const filesConfs: {
     [key: string]: (undefined | {
-        [outFile: string]: ((rgba: RGB) => RGB)
+        [outFile: string]: ((rgba: RGB, pos: POS) => RGB)
     })
 } = {
 
@@ -119,7 +121,62 @@ const filesConfs: {
     },
 
     '20231002_103537.jpg': {
-        '20231002_103537.jpg'(c) {
+        '20231002_103537_1.jpg'(c, p) {
+            const lead = colorHex('#d09f00');
+            const base = colorHex('#094837');
+            const baseLeft = colorHex('#480937');
+            const baseRight = colorHex('#093748');
+            const baseLight = colorHex('#15a267');
+            const saracinesche = colorHex('#8c4615');
+            return addList(
+                // Base
+                mult(base, scalar(.10)),
+
+                // Mattoni base
+                mult(baseLeft, scalar(
+                    (filterScalarAndStretch(getR(c), .11, .81)
+                        - filterScalarAndStretch(getB(c), .11, .81))
+                    * .9 * gradientLinear(p.x, .5, 0)
+                )),
+                mult(baseRight, scalar(
+                    (filterScalarAndStretch(getR(c), .11, .81)
+                        - filterScalarAndStretch(getB(c), .11, .81))
+                    * .9 * gradientLinear(p.x, .5, 1)
+                )),
+
+                // Mattoni luce
+                mult(baseLight, scalar(
+                    (filterScalarAndStretch(getR(c), .11, .81)
+                        - filterScalarAndStretch(getG(c), .11, .81))
+                    * .9 * gradientLinear(p.x, 0, .5))),
+                mult(lead, scalar(
+                    (filterScalarAndStretch(getR(c), .11, .81)
+                        - filterScalarAndStretch(getG(c), .11, .81))
+                    * .9 * gradientLinear(p.x, 1, .5))),
+
+                // Effetti su mattoni
+                mult(lead, scalar(
+                    (filterScalarAndStretch(getG(c), .5, .6)
+                        - filterScalarAndStretch(getB(c), .5, .6))
+                    * .9)),
+
+                // Saracinesca
+                p.y > .75
+                    ? mult(saracinesche, scalar(filterScalarAndStretch(getG(c), .85, .95) * 2))
+                    : false,
+
+                // Finestre
+                (p.y < .7 && p.x < .482)
+                    ? mult(lead,
+                        scalar(filterScalarAndStretch(getG(c), .85, .95) * .12))
+                    : false,
+                (p.y < .7 && p.x > .486)
+                    ? mult(baseLight,
+                        scalar(filterScalarAndStretch(getG(c), .85, .95) * .11))
+                    : false,
+            );
+        },
+        '20231002_103537_2.jpg'(c) {
             return addList(
                 // Base
                 mult(colorHex('#cc1a4d'), scalar(.02)),
@@ -180,6 +237,9 @@ const filesConfs: {
                             r: rgba.r / 255.0,
                             g: rgba.g / 255.0,
                             b: rgba.b / 255.0,
+                        }, {
+                            x: x / width,
+                            y: y / height,
                         });
                         rgba.r = safeColor(color.r * 255.0);
                         rgba.g = safeColor(color.g * 255.0);
